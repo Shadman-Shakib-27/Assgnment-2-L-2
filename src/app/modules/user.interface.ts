@@ -1,4 +1,4 @@
-export interface Iuser {
+export type Iuser = {
   userId: number;
   userName: string;
   password: string;
@@ -20,4 +20,4 @@ export interface Iuser {
     price: number;
     quantity: number;
   }>;
-}
+};

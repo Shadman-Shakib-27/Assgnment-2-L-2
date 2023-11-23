@@ -32,7 +32,7 @@ const getAllUser = async (req: Request, res: Response) => {
 
 const getSingleUser = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    const { user:userId } = req.params;
 
     const result = await UserServices.getSingleUserFromDB(userId);
 

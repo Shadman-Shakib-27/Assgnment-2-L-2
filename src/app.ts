@@ -1,8 +1,8 @@
-import express, { Request, Response } from 'express';
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import { UserRoutes } from './app/modules/users.route';
 
-const app = express();
+const app: Application = express();
 
 // Parser
 app.use(express.json());
