@@ -17,6 +17,7 @@ export type TIuser = {
     city: string;
     country: string;
   };
+  isDeleted:boolean;
   orders: Array<{
     productName: string;
     price: number;

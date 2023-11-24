@@ -51,6 +51,7 @@ const userSchema = new Schema<TIuser, UserModel, IUserMethods>({
     city: { type: String, required: true },
     country: { type: String, required: true },
   },
+  isDeleted: { type: Boolean, default: false },
   orders: {
     type: [OrderSchema],
     default: [],
@@ -62,4 +63,4 @@ userSchema.methods.isUserExists = async function (userId: number) {
   return existingUser;
 };
 
-export const User = model<TIuser,UserModel>('User', userSchema);
+export const User = model<TIuser, UserModel>('User', userSchema);

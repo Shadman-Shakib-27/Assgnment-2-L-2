@@ -11,6 +11,7 @@ app.use(cors());
 // Application Route
 // app.use('/api/v1/users', UserRoutes);
 
-app.use('/GET/api', UserRoutes);
+// app.use('/GET/api', UserRoutes);
+app.use('/api', UserRoutes);
 
 export default app;

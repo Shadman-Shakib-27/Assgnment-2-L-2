@@ -16,7 +16,14 @@ const createUserIntoDB = async (iuser: TIuser) => {
 };
 
 const getAllUsersFromDB = async () => {
-  const result = await User.find();
+  const result = await User.find().select({
+    username: 1,
+    fullName: 1,
+    age: 1,
+    email: 1,
+    address: 1,
+    _id: 0,
+  });
   return result;
 };
 
@@ -25,8 +32,22 @@ const getSingleUserFromDB = async (userId: string) => {
   return result;
 };
 
+const updateUserFromDB = async () => {
+  const result = await User.updateOne({
+    $set: { username: 'Shamoly Jahan', age: '200' },
+  });
+  return result;
+};
+
+const deleteUserFromDB = async (userId: string) => {
+  const result = await User.updateOne({ userId }, { isDeleted: true });
+  return result;
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
   getSingleUserFromDB,
+  deleteUserFromDB,
+  updateUserFromDB,
 };
