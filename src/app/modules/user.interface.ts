@@ -1,6 +1,8 @@
-export type Iuser = {
+import { Model } from 'mongoose';
+
+export type TIuser = {
   userId: number;
-  userName: string;
+  username: string;
   password: string;
   fullName: {
     firstName: string;
@@ -21,3 +23,9 @@ export type Iuser = {
     quantity: number;
   }>;
 };
+
+export type IUserMethods = {
+  isUserExists(userId: number): Promise<TIuser | null>;
+};
+
+export type UserModel = Model<TIuser, Record<string, never>, IUserMethods>;

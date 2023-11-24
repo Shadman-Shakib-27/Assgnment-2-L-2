@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { Iuser } from './user.interface';
+import { IUserMethods, TIuser, UserModel } from './user.interface';
 
 type order = {
   productName: string;
@@ -22,9 +22,9 @@ const OrderSchema = new Schema<order>({
   },
 });
 
-const userSchema = new Schema<Iuser>({
+const userSchema = new Schema<TIuser, UserModel, IUserMethods>({
   userId: { type: Number, unique: true, required: true },
-  userName: {
+  username: {
     type: String,
     required: [true, 'User Name is Required.'],
   },
@@ -57,4 +57,9 @@ const userSchema = new Schema<Iuser>({
   },
 });
 
-export const UserModel = model<Iuser>('User', userSchema);
+userSchema.methods.isUserExists = async function (userId: number) {
+  const existingUser = await User.findOne({ userId });
+  return existingUser;
+};
+
+export const User = model<TIuser,UserModel>('User', userSchema);

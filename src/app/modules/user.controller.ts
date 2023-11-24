@@ -1,18 +1,26 @@
 import { Request, Response } from 'express';
 import { UserServices } from './user.services';
+import { UserValidationSchema } from './user.validation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
     const { user: userData } = req.body;
-    const result = await UserServices.createUserIntoDB(userData);
+
+    const zodParseData = UserValidationSchema.parse(userData);
+    const result = await UserServices.createUserIntoDB(zodParseData);
 
     res.status(200).json({
       success: true,
       message: 'User is Created Succesfully.',
       data: result,
     });
-  } catch (err) {
-    console.log(err);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Something Went Wrong',
+    });
   }
 };
 
@@ -32,7 +40,7 @@ const getAllUser = async (req: Request, res: Response) => {
 
 const getSingleUser = async (req: Request, res: Response) => {
   try {
-    const { user:userId } = req.params;
+    const { userId } = req.params;
 
     const result = await UserServices.getSingleUserFromDB(userId);
 
@@ -41,8 +49,10 @@ const getSingleUser = async (req: Request, res: Response) => {
       message: 'Single Student is Retrieved Succesfully',
       data: result,
     });
-  } catch (err) {
-    console.log(err);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    console.log();
   }
 };
 
