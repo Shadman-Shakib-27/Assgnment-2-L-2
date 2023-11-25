@@ -8,8 +8,8 @@ const userNameSchema = new Schema<TUserName>(
   {
     firstName: {
       type: String,
-      required: [true, 'First name is required'],
-      maxlength: [20, "first name can't be greater than 20 by length"],
+      required: [true, 'First Name is Mandatory.'],
+      maxlength: [20, "First name cannot be greater than 20 length"],
       validate: function (value: string) {
         const nameCapitalized = value.charAt(0).toUpperCase() + value.slice(1);
         return value === nameCapitalized;
@@ -18,7 +18,7 @@ const userNameSchema = new Schema<TUserName>(
 
     lastName: {
       type: String,
-      required: [true, 'Last name is required'],
+      required: [true, 'Last Name is Mandatory'],
     },
   },
   { _id: false },
@@ -49,7 +49,7 @@ const userSchema = new Schema<TUser>({
     required: true,
     unique: true,
   },
-  userName: {
+  username: {
     type: String,
     required: true,
     unique: true,
@@ -65,17 +65,17 @@ const userSchema = new Schema<TUser>({
   email: {
     type: String,
     unique: true,
-    required: [true, 'Email is required'],
+    required: [true, 'Email is Mandatory'],
   },
   age: Number,
   hobbies: { type: [String], required: true },
   address: {
     type: userAddressSchema,
-    required: [true, 'address is required'],
+    required: [true, 'Address is Mandatory'],
   },
   isActive: {
     type: Boolean,
-    required: [true, 'Status is required'],
+    required: [true, 'Status is Mandatory'],
     default: true,
   },
   orders: { type: [userOrderSchema] },

@@ -96,7 +96,7 @@ const updateUser = async (req: Request, res: Response) => {
     }
     const userData = {
       userId: updatedData.userId,
-      userName: updatedData.userName,
+      userName: updatedData.username,
       fullName: updatedData.fullName,
       age: updatedData.age,
       email: updatedData.email,

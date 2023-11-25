@@ -16,7 +16,7 @@ const getAllUser = async () => {
       $project: {
         _id: 0,
         fullName: 1,
-        userName: 1,
+        username: 1,
         age: 1,
         email: 1,
         address: 1,
@@ -33,7 +33,7 @@ const getSingleUser = async (id: string) => {
     {
       _id: 0,
       userId: 1,
-      userName: 1,
+      username: 1,
       fullName: 1,
       age: 1,
       email: 1,

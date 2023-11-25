@@ -21,13 +21,13 @@ const userOrderValidation = z.object({
 // This is Define The User Validation
 export const userValidationSchema = z.object({
   userId: z.number().int().positive(),
-  userName: z.string(),
+  username: z.string(),
   password: z.string(),
   fullName: userNameValidation,
   email: z.string().email(),
   age: z.number().int().positive(),
   hobbies: z.array(z.string()).refine((data) => data.length > 0, {
-    message: 'Hobbies must not be empty',
+    message: 'Hobbies Cannot Be Empty.',
   }),
   address: userAddressValidation,
   isActive: z.boolean().default(true),

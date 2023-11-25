@@ -12,7 +12,7 @@ export type TOrder = {
 };
 export type TUser = {
   userId: number;
-  userName: string;
+  username: string;
   password: string;
   fullName: TUserName;
   age: number;
@@ -29,7 +29,7 @@ export type TUser = {
 
 export type TUpdateUser = {
   userId?: number;
-  userName?: string;
+  username?: string;
   fullName?: TUserName;
   age?: number;
   email?: string;
