@@ -15,8 +15,8 @@ const getAllUser = async () => {
     {
       $project: {
         _id: 0,
-        userName: 1,
         fullName: 1,
+        userName: 1,
         age: 1,
         email: 1,
         address: 1,
@@ -64,7 +64,7 @@ const updateUserOrder = async (id: string, orderData: TOrder) => {
   return result;
 };
 
-// user orders
+// For User Orders
 const getUserOrder = async (id: string) => {
   const result = await User.findOne({ userId: id });
 

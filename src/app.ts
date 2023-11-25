@@ -2,7 +2,6 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import { userRoute } from './app/modules/users.route';
 
-
 const app: Application = express();
 
 // Parser Middleware
@@ -13,7 +12,10 @@ app.use(cors());
 app.use('/api/users', userRoute);
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hi There From Next Level Developer SHADMAN!!!');
+  res.status(200).json({
+    Success: true,
+    Message: 'Hi There, From Next Level Web Developer SHADMAN !!!',
+  });
 });
 
 app.all('*', (req, res) => {

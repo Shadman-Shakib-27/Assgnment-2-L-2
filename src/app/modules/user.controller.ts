@@ -90,7 +90,7 @@ const updateUser = async (req: Request, res: Response) => {
         message: 'User Not Found',
         error: {
           code: 404,
-          description: 'User Not Found!',
+          description: 'User Not Found',
         },
       });
     }

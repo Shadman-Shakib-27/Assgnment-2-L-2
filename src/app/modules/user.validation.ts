@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// Define the sub-Validations
+//This is  Define The Sub-Validations.
 const userNameValidation = z.object({
   firstName: z.string(),
   lastName: z.string(),
@@ -18,7 +18,7 @@ const userOrderValidation = z.object({
   quantity: z.number(),
 });
 
-// Define the user Validation
+// This is Define The User Validation
 export const userValidationSchema = z.object({
   userId: z.number().int().positive(),
   userName: z.string(),
