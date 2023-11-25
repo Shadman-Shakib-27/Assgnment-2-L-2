@@ -1,17 +1,26 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
-import { UserRoutes } from './app/modules/users.route';
+import { userRoute } from './app/modules/users.route';
+
 
 const app: Application = express();
 
-// Parser
+// Parser Middleware
 app.use(express.json());
 app.use(cors());
 
-// Application Route
-// app.use('/api/v1/users', UserRoutes);
+// Application Routes
+app.use('/api/users', userRoute);
 
-// app.use('/GET/api', UserRoutes);
-app.use('/api', UserRoutes);
+app.get('/', (req: Request, res: Response) => {
+  res.send('Hi There From Next Level Developer SHADMAN!!!');
+});
+
+app.all('*', (req, res) => {
+  res.status(400).json({
+    success: false,
+    message: 'Your Route is Not Exists Bro!!!',
+  });
+});
 
 export default app;

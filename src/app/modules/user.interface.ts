@@ -1,13 +1,20 @@
 import { Model } from 'mongoose';
 
-export type TIuser = {
+export type TUserName = {
+  firstName: string;
+  lastName: string;
+};
+
+export type TOrder = {
+  productName: string;
+  price: number;
+  quantity: number;
+};
+export type TUser = {
   userId: number;
-  username: string;
+  userName: string;
   password: string;
-  fullName: {
-    firstName: string;
-    lastName: string;
-  };
+  fullName: TUserName;
   age: number;
   email: string;
   isActive: boolean;
@@ -17,16 +24,27 @@ export type TIuser = {
     city: string;
     country: string;
   };
-  isDeleted:boolean;
-  orders: Array<{
-    productName: string;
-    price: number;
-    quantity: number;
-  }>;
+  orders?: TOrder[];
 };
 
-export type IUserMethods = {
-  isUserExists(userId: number): Promise<TIuser | null>;
+export type TUpdateUser = {
+  userId?: number;
+  userName?: string;
+  fullName?: TUserName;
+  age?: number;
+  email?: string;
+  isActive?: boolean;
+  hobbies?: string[];
+  address?: {
+    street: string;
+    city: string;
+    country: string;
+  };
+  orders?: TOrder[];
 };
 
-export type UserModel = Model<TIuser, Record<string, never>, IUserMethods>;
+// Static Method
+export interface UserModel extends Model<TUser> {
+  // eslint-disable-next-line no-unused-vars
+  isUserExists(id: number | string): Promise<TUser | null>;
+}

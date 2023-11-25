@@ -1,53 +1,94 @@
+import { TOrder, TUpdateUser, TUser } from './user.interface';
 import { User } from './user.model';
-import { TIuser } from './user.interface';
 
-const createUserIntoDB = async (iuser: TIuser) => {
-  // const result = await User.create(iuser);
-
-  const user = new User(iuser);
-
-  if (await user.isUserExists(iuser.userId)) {
-    throw new Error('User Already Exists.');
+const createUser = async (userData: TUser) => {
+  if (await User.isUserExists(userData.userId)) {
+    throw new Error('User Already Exists');
   }
-
-  const result = await user.save();
+  const result = await User.create(userData);
 
   return result;
 };
 
-const getAllUsersFromDB = async () => {
-  const result = await User.find().select({
-    username: 1,
-    fullName: 1,
-    age: 1,
-    email: 1,
-    address: 1,
-    _id: 0,
-  });
+const getAllUser = async () => {
+  const result = await User.aggregate([
+    {
+      $project: {
+        _id: 0,
+        userName: 1,
+        fullName: 1,
+        age: 1,
+        email: 1,
+        address: 1,
+      },
+    },
+  ]);
   return result;
 };
 
-const getSingleUserFromDB = async (userId: string) => {
-  const result = await User.findOne({ userId });
+// For Getting Single User
+const getSingleUser = async (id: string) => {
+  const result = await User.findOne(
+    { userId: id },
+    {
+      _id: 0,
+      userId: 1,
+      userName: 1,
+      fullName: 1,
+      age: 1,
+      email: 1,
+      address: 1,
+    },
+  );
   return result;
 };
 
-const updateUserFromDB = async () => {
-  const result = await User.updateOne({
-    $set: { username: 'Shamoly Jahan', age: '200' },
-  });
+// For Updating Single User
+const updateUser = async (userId: number | string, data: TUpdateUser) => {
+  const result = await User.updateOne({ userId }, data);
   return result;
 };
 
-const deleteUserFromDB = async (userId: string) => {
-  const result = await User.updateOne({ userId }, { isDeleted: true });
+// For Deleting User
+const deleteUser = async (id: string) => {
+  const result = await User.deleteOne({ userId: id });
   return result;
+};
+
+// For Updating User Order
+const updateUserOrder = async (id: string, orderData: TOrder) => {
+  const result = await User.updateOne(
+    { userId: id },
+    { $addToSet: { orders: orderData } },
+  );
+  return result;
+};
+
+// user orders
+const getUserOrder = async (id: string) => {
+  const result = await User.findOne({ userId: id });
+
+  return result?.orders;
+};
+
+const calculateOrders = async (id: string) => {
+  const user = await User.findOne({ userId: id });
+
+  const totalOrderPrice =
+    user?.orders?.reduce(
+      (total, orders) => total + orders.price * orders.quantity,
+      0,
+    ) || 0;
+  return totalOrderPrice;
 };
 
 export const UserServices = {
-  createUserIntoDB,
-  getAllUsersFromDB,
-  getSingleUserFromDB,
-  deleteUserFromDB,
-  updateUserFromDB,
+  createUser,
+  getAllUser,
+  getSingleUser,
+  updateUser,
+  deleteUser,
+  updateUserOrder,
+  getUserOrder,
+  calculateOrders,
 };

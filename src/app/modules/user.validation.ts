@@ -1,32 +1,35 @@
 import { z } from 'zod';
 
-const orderSchema = z.object({
+// Define the sub-Validations
+const userNameValidation = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+});
+
+const userAddressValidation = z.object({
+  street: z.string(),
+  city: z.string(),
+  country: z.string(),
+});
+
+const userOrderValidation = z.object({
   productName: z.string(),
   price: z.number(),
   quantity: z.number(),
 });
 
-const userSchema = z.object({
-  userId: z.number(),
-  username: z
-    .string()
-    .max(20, { message: "User Name Can't Exceeded More Than 20 Characters." }),
+// Define the user Validation
+export const userValidationSchema = z.object({
+  userId: z.number().int().positive(),
+  userName: z.string(),
   password: z.string(),
-  fullName: z.object({
-    firstName: z.string(),
-    lastName: z.string(),
+  fullName: userNameValidation,
+  email: z.string().email(),
+  age: z.number().int().positive(),
+  hobbies: z.array(z.string()).refine((data) => data.length > 0, {
+    message: 'Hobbies must not be empty',
   }),
-  email: z.string(),
-  age: z.number(),
+  address: userAddressValidation,
   isActive: z.boolean().default(true),
-  isDeleted: z.boolean().default(false),
-  hobbies: z.array(z.string()),
-  address: z.object({
-    street: z.string(),
-    city: z.string(),
-    country: z.string(),
-  }),
-  orders: z.array(orderSchema).default([]),
+  orders: z.array(userOrderValidation).default([]).optional(),
 });
-
-export const UserValidationSchema = userSchema;
