@@ -235,7 +235,7 @@ const calculateOrders = async (req: Request, res: Response) => {
         },
       });
     }
-    const result = await UserServices.calculateOrders(userId);
+    const result = await UserServices.calculateTotalPriceSpecificUser(userId);
 
     res.status(200).json({
       success: true,
