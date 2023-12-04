@@ -50,7 +50,6 @@ const userSchema = new Schema<TUser>({
   username: {
     type: String,
     required: true,
-    unique: true,
   },
 
   password: {
@@ -82,8 +81,6 @@ const userSchema = new Schema<TUser>({
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const users = this;
-
-  // Store hashing  password into DB.
   users.password = await bcrypt.hash(
     users.password,
     Number(config.bcrypt_salt_rounds),
