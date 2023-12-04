@@ -1,6 +1,6 @@
 This is A Simple Mongoose,Typescript,Express Js Server App.
 
-The App Live Link is: [User&OrderApp](https://l2-assignment2-shadman.vercel.app/).
+The App Live Link is: [User&OrderApp](https://l2-a2-shadman.vercel.app/).
 
 --To Run My App Locally
 
@@ -8,4 +8,6 @@ The App Live Link is: [User&OrderApp](https://l2-assignment2-shadman.vercel.app/
 
 * Open Your Terminal
 
-- Write npm run start:dev
+* Write npm install
+
+- Then, Write npm run start:dev
