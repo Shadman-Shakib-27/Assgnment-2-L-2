@@ -1,20 +1,20 @@
 import { Request, Response } from 'express';
 import { userValidationSchema } from './user.validation';
 import { UserServices } from './user.services';
-import { TUser } from './user.interface';
+import { User } from './user.model';
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    const { user: userData } = req.body;
-
-    //ZOD Validation
+    const userData = req.body;
     const userZodData = userValidationSchema.parse(userData);
-
+    if (await User.isUserExists(userData.userId)) {
+      throw new Error('User Already Exists.');
+    }
     const result = await UserServices.createUser(userZodData);
 
     res.status(200).json({
       success: true,
-      message: 'User Created Successfully',
+      message: 'User Created Successfully.',
       data: result,
     });
 
@@ -22,7 +22,7 @@ const createUser = async (req: Request, res: Response) => {
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      message: err.message || 'Something Went Wrong',
+      message: err.message || 'Something Went Wrong.',
       error: err,
     });
   }
@@ -34,14 +34,14 @@ const getAllUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: 'User Fetched Successfully!',
+      message: 'User Fetched Successfully.',
       data: result,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      message: err.message || 'Something Went Wrong',
+      message: err.message || 'Something Went Wrong.',
       error: err,
     });
   }
@@ -51,28 +51,28 @@ const getSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
-    const result = await UserServices.getSingleUser(userId);
-
-    if (result === null) {
+    if ((await User.isUserExists(userId)) == null) {
       return res.status(404).json({
         success: false,
-        message: 'User Not Found',
+        message: 'User Not Found.',
         error: {
           code: 404,
-          description: 'User Not Found!',
+          description: 'User Not Found.',
         },
       });
     }
+
+    const result = await UserServices.getSingleUser(userId);
     res.status(200).json({
       success: true,
-      message: 'User Fetched Successfully!',
+      message: 'User Fetched Successfully.',
       data: result,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      message: err.message || 'Something Went Wrong',
+      message: err.message || 'Something Went Wrong.',
       error: err,
     });
   }
@@ -81,169 +81,172 @@ const getSingleUser = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
   try {
     const userId = Number(req.params.userId);
-    const updatedData: TUser = req.body;
+    const updatedData = req.body;
+    const userZodData = userValidationSchema.parse(updatedData);
 
-    const result = await UserServices.updateUser(userId, updatedData);
-    if (result?.matchedCount === 0) {
+    if ((await User.isUserExists(userId)) == null) {
       return res.status(404).json({
         success: false,
-        message: 'User Not Found',
+        message: 'User Not Found.',
         error: {
           code: 404,
-          description: 'User Not Found',
+          description: 'User Not Found.',
         },
       });
     }
+
     const userData = {
-      userId: updatedData.userId,
-      userName: updatedData.username,
-      fullName: updatedData.fullName,
-      age: updatedData.age,
-      email: updatedData.email,
-      isActive: updatedData.isActive,
-      hobbies: updatedData.hobbies,
-      address: updatedData.address,
+      userId: userZodData.userId,
+      username: userZodData.username,
+      fullName: userZodData.fullName,
+      age: userZodData.age,
+      email: userZodData.email,
+      isActive: userZodData.isActive,
+      hobbies: userZodData.hobbies,
+      address: userZodData.address,
     };
+    await UserServices.updateUser(userId, userZodData);
 
     res.status(200).json({
       success: true,
-      message: 'User Updated Successfully!',
+      message: 'User Updated Successfully.',
       data: userData,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      message: err.message || 'Something Went Wrong',
+      message: err.message || 'Something Went Wrong.',
       error: err,
     });
   }
 };
 
-// delete a specific user
 const deleteUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    // console.log(userId);
 
-    const result = await UserServices.deleteUser(userId);
-
-    if (result?.deletedCount === 0) {
-      res.status(404).json({
+    if ((await User.isUserExists(userId)) == null) {
+      return res.status(404).json({
         success: false,
-        message: 'User Not Found!',
+        message: 'User Not Found.',
         error: {
           code: 404,
-          description: 'User Not Found!',
+          description: 'User Not Found.',
         },
       });
-    } else {
-      res.status(200).json({
-        success: true,
-        message: 'User Deleted Successfully!',
-        data: result,
-      });
     }
+
+    // const result = await UserServices.deleteUser(userId);
+    await UserServices.deleteUser(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'User Deleted Successfully.',
+      data: null,
+    });
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      message: err.message || 'Something Went Wrong',
+      message: err.message || 'Something Went Wrong.',
       error: err,
     });
   }
 };
 
-// update the order property from order
 const updateUserOrder = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const orderData = req.body;
-    const result = await UserServices.updateUserOrder(userId, orderData);
-    if (result?.matchedCount === 0) {
+
+    if ((await User.isUserExists(userId)) == null) {
       return res.status(404).json({
         success: false,
-        message: 'User Not Found!',
+        message: 'User Not Found.',
         error: {
           code: 404,
-          description: 'User Not Found!',
+          description: 'User Not Found.',
         },
       });
     }
 
+    await UserServices.updateUserOrder(userId, orderData);
+
     res.status(200).json({
       success: true,
-      message: 'Order Created Successfully!',
-      data: result,
+      message: 'Order Created Successfully.',
+      data: null,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      message: err.message || 'Something Went Wrong',
+      message: err.message || 'Something Went Wrong.',
       error: err,
     });
   }
 };
 
-// get all orders of a user
 const getUserOrder = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
-    const result = await UserServices.getUserOrder(userId);
-    // console.log(result);
-    if (!result) {
+    if ((await User.isUserExists(userId)) == null) {
       return res.status(404).json({
         success: false,
-        message: 'User Not Found!',
+        message: 'User Not Found.',
         error: {
           code: 404,
-          description: 'User Not Found',
+          description: 'User Not Found.',
         },
       });
     }
+
+    const result = await UserServices.getUserOrder(userId);
+
     res.status(200).json({
       success: true,
-      message: 'Order Fetched Successfully',
-      orders: result,
+      message: 'Order Fetched Successfully.',
+      data: { orders: result },
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      message: err.message || 'Something Went Wrong',
+      message: err.message || 'Something Went Wrong.',
       error: err,
     });
   }
 };
 
-// calculate orders
 const calculateOrders = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
-    const result = await UserServices.calculateOrders(userId);
-    if (!result) {
+    if ((await User.isUserExists(userId)) == null) {
       return res.status(404).json({
         success: false,
-        message: 'User Not Found!!',
+        message: 'User Not Found.',
         error: {
           code: 404,
-          description: 'User Not Found!!',
+          description: 'User Not Found.',
         },
       });
     }
+    const result = await UserServices.calculateOrders(userId);
+
     res.status(200).json({
       success: true,
-      message: 'Total price Calculated Successfully!!',
+      message: 'Total-Price Calculated Successfully.',
       totalPrice: result,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     res.status(500).json({
       success: false,
-      message: err.message || 'Something Went Wrong!',
+      message: err.message || 'Something Went Wrong.',
       error: err,
     });
   }

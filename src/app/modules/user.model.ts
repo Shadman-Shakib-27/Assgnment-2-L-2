@@ -3,13 +3,12 @@ import { TUser, TUserName, UserModel } from './user.interface';
 import config from '../config/index';
 import bcrypt from 'bcrypt';
 
-// This is User Sub Schema
 const userNameSchema = new Schema<TUserName>(
   {
     firstName: {
       type: String,
-      required: [true, 'First Name is Mandatory.'],
-      maxlength: [20, "First name cannot be greater than 20 length"],
+      required: [true, 'First name is required'],
+      maxlength: [20, "first name can't be greater than 20 by length"],
       validate: function (value: string) {
         const nameCapitalized = value.charAt(0).toUpperCase() + value.slice(1);
         return value === nameCapitalized;
@@ -18,7 +17,7 @@ const userNameSchema = new Schema<TUserName>(
 
     lastName: {
       type: String,
-      required: [true, 'Last Name is Mandatory'],
+      required: [true, 'Last name is required'],
     },
   },
   { _id: false },
@@ -42,7 +41,6 @@ const userOrderSchema = new Schema(
   { _id: false },
 );
 
-// This is User Schema
 const userSchema = new Schema<TUser>({
   userId: {
     type: Number,
@@ -57,7 +55,7 @@ const userSchema = new Schema<TUser>({
 
   password: {
     type: String,
-    required: true,
+    required: [true, 'Password is Required'],
   },
 
   fullName: userNameSchema,
@@ -65,31 +63,27 @@ const userSchema = new Schema<TUser>({
   email: {
     type: String,
     unique: true,
-    required: [true, 'Email is Mandatory'],
+    required: [true, 'Email is Required'],
   },
   age: Number,
   hobbies: { type: [String], required: true },
   address: {
     type: userAddressSchema,
-    required: [true, 'Address is Mandatory'],
+    required: [true, 'Address is Required'],
   },
   isActive: {
     type: Boolean,
-    required: [true, 'Status is Mandatory'],
+    required: [true, 'Status is Required'],
     default: true,
   },
   orders: { type: [userOrderSchema] },
 });
 
-// Creating Middleware
-
-// Before Sending Data To MongoDB
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const users = this;
 
-  // Storing Hashing Password Into MongoDB.
-
+  // Store hashing  password into DB.
   users.password = await bcrypt.hash(
     users.password,
     Number(config.bcrypt_salt_rounds),
@@ -97,17 +91,17 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// After User Saved
-userSchema.post('save', function (document, next) {
-  document.password = '';
-  next();
-});
+userSchema.methods.toJSON = function () {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+  const userObject = user.toObject();
+  delete userObject.password;
+  return userObject;
+};
 
-// Creating Custom Static Methods
-userSchema.statics.isUserExists = async function (id: string) {
-  const existingUser = await User.findOne({ id });
+userSchema.statics.isUserExists = async function (userId: string) {
+  const existingUser = await User.findOne({ userId });
   return existingUser;
 };
 
-// User
 export const User = model<TUser, UserModel>('User', userSchema);
